@@ -7,12 +7,13 @@
 * Build an ETL pipeline that extracts data from S3, stages them in a Data Lake, and transforms data into a set of dimensional tables in Snowflake
 ### ETL Process
 * I first extracted all the song data JSON files from S3 and loaded them into Databricks so that I could utilize PySpark to transform the data into separate tables. I did the same process for all the user log data as well.
-* I created 4 dimensional tables: Songs, Artists, Users and Time
+* I created 4 dimensional tables (Songs, Artists, Users and Time) and 1 fact table (SongPlays):
    * For the Songs table I extracted the song_id, title, artist_id, year, and duration columns from the song data file. I partitioned this table by year and artist_id when I loaded the data back into S3 as a Parquet file.
    * For the Artists table I extracted distinct values of artist_id, artist_name, artist_location, artist_latitude, and artist_longitude columns from the song data file. I did not apply any partitions and loaded this file as a Parquet back into S3.
    * For the Users table I extracted distinct values of user_id, firstname, lastname, gender, and level columns from the user log data file. I did not apply any partitions and loaded this file as a Parquet back into S3.
    * For the Time table there were a couple of transformations I had to make before creating the dataframe. First I created a column datetime that would read the ts column from the user log data file as a unixtime value and convert it into a datetime value. Using this new column, I created 5 new columns: start time, year, month, day of month, and week of year. I took these new columns and created a new table for the time data, partitioned by year and month before loading it into S3 as a Parquet file.
-* I then created the 
+   * I then created the SongPlays fact table. To create this table I had to first create a right join of the song dataframe and the user log dataframe. I then created a new column to generate a unique id for each row, based on the row number. The columns in the SongPlays tables were: songplay_id, datetime_id, year, month, user_id, level, song_id, artist_id, session_id, location, and user_agent. I partitioned this table by year and month as I loaded the table into S3 as a Parquet file.
+* After transforming the data in Databricks and staging this new data into S3, I loaded them into Snowflake so that the app developers could utilize Snowflake's interface to analyze the data. I created the tables and inserted the data for each of the 6 tables.
 
 ## Architecural Diagram
 ![Architectural_Diagram](https://github.com/user-attachments/assets/645bd199-9b25-4829-ba5c-15c2e3776093)
