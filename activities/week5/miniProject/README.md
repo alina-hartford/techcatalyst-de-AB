@@ -8,9 +8,11 @@
 ### ETL Process
 * I first extracted all the song data JSON files from S3 and loaded them into Databricks so that I could utilize PySpark to transform the data into separate tables. I did the same process for all the user log data as well.
 * I created 4 dimensional tables: Songs, Artists, Users and Time
-   * For the Songs table I extracted the song_id, title, artist_id, year, and duration from the song data file. I partitioned this table by year and artist_id when I loaded the data back into S3 as a Parquet file.
-   * For the Artists table I extracted distinct values of artist_id, artist_name, artist_location, artist_latitude, and artist_longitude. I did not apply any partitions and loaded this file as a Parquet back into S3.
-### Data Lake and Data Warehouse
+   * For the Songs table I extracted the song_id, title, artist_id, year, and duration columns from the song data file. I partitioned this table by year and artist_id when I loaded the data back into S3 as a Parquet file.
+   * For the Artists table I extracted distinct values of artist_id, artist_name, artist_location, artist_latitude, and artist_longitude columns from the song data file. I did not apply any partitions and loaded this file as a Parquet back into S3.
+   * For the Users table I extracted distinct values of user_id, firstname, lastname, gender, and level columns from the user log data file. I did not apply any partitions and loaded this file as a Parquet back into S3.
+   * For the Time table there were a couple of transformations I had to make before creating the dataframe. First I created a column datetime that would read the ts column from the user log data file as a unixtime value and convert it into a datetime value. Using this new column, I created 5 new columns: start time, year, month, day of month, and week of year. I took these new columns and created a new table for the time data, partitioned by year and month before loading it into S3 as a Parquet file.
+* I then created the 
 
 ## Architecural Diagram
 ![Architectural_Diagram](https://github.com/user-attachments/assets/645bd199-9b25-4829-ba5c-15c2e3776093)
