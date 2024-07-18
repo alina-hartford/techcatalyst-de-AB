@@ -2,17 +2,27 @@
 
 ## Introduction
 
+### Project Description
+* Sparkify, a music streaming startup, wants to move their processes and data onto the cloud. Their song data and user activity is stored in S3 as JSON files. 
+* Build an ETL pipeline that extracts data from S3, stages them in a Data Lake, and transforms data into a set of dimensional tables in Snowflake
+### ETL Process
+* I first extracted all the song data JSON files from S3 and loaded them into Databricks so that I could utilize PySpark to transform the data into separate tables. I did the same process for all the user log data as well.
+* I created 4 dimensional tables: Songs, Artists, Users and Time
+   * For the Songs table I extracted the song_id, title, artist_id, year, and duration from the song data file. I partitioned this table by year and artist_id when I loaded the data back into S3 as a Parquet file.
+   * For the Artists table I extracted distinct values of artist_id, artist_name, artist_location, artist_latitude, and artist_longitude. I did not apply any partitions and loaded this file as a Parquet back into S3.
+### Data Lake and Data Warehouse
+
 ## Architecural Diagram
 ![Architectural_Diagram](https://github.com/user-attachments/assets/645bd199-9b25-4829-ba5c-15c2e3776093)
 
-
 ## Data in Amazon S3
-Song Log Data (Raw) : https://techcatalyst-public.s3.us-west-2.amazonaws.com/log_data/
+User Log Data (Raw) : `s3://techcatalyst-public/log_data`
 
-Song Data (Raw) : https://techcatalyst-public.s3.us-west-2.amazonaws.com/song_data/
+Song Data (Raw) : `s3://techcatalyst-public/song_data`
 
-Transformed Data: https://techcatalyst-public.s3.us-west-2.amazonaws.com/dw_stage/alina/
+Transformed Data: `s3://techcatalyst-public/dw_stage/alina/`
 
+![Transformed Data in S3](https://github.com/user-attachments/assets/e7abfb9d-87ba-43a6-9a97-44a19bcb91d9)
 
 ## Creating Tables in Snowflake
 ```sql
@@ -71,7 +81,7 @@ CREATE OR REPLACE TRANSIENT TABLE TECHCATALYST_DE.ABABY.SONGPLAYS_FACT (
 ```
 
 ## Inserting data into created tables in Snowflake
-Before I inserted data intomy tables, I made sure I set up my external stage so that I could access the data in my S3 Bucket. I also created a Parquet file format so that Snowflake would be able to read the Parquet files I had created.
+Before I inserted data into my tables, I made sure I set up my external stage so that I could access the data in my S3 Bucket. I also created a Parquet file format so that Snowflake would be able to read the Parquet files I had created. I then read and inspected the schema of the parquet files to understand which columns are accessible and what their types are.
 ```sql
 --inserting data into SONGS_DIM table from songs_table in S3
 INSERT INTO SONGS_DIM (SONG_ID, SONG_TITLE, ARTIST_ID, SONG_YEAR, SONG_DURATION)
