@@ -4,14 +4,14 @@ import streamlit as st
 import boto3
 
 
-config = configparser.ConfigParser()
+#config = configparser.ConfigParser()
 
-config.read('aws.cfg')
+#config.read('aws.cfg')
 
-aws_access_key = config['AWS']['aws_access_key_id']
-aws_secret_key = config['AWS']['aws_secret_access_key']
+#aws_access_key = config['AWS']['aws_access_key_id']
+#aws_secret_key = config['AWS']['aws_secret_access_key']
 
-s3 = boto3.client('s3', aws_access_key_id = aws_access_key, aws_secret_access_key = aws_secret_key)
+#s3 = boto3.client('s3', aws_access_key_id = aws_access_key, aws_secret_access_key = aws_secret_key)
 
 st.title['NYC Taxi Data Analysis']
 
